@@ -1,0 +1,6 @@
+template
+report/*
+
+!report/report.bib
+!report/report.tex
+!report/report.pdf

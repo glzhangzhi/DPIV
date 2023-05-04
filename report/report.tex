@@ -1,0 +1,84 @@
+\documentclass[UTF8]{ctexart}
+
+% 使用CteX宏集，用于中文字符排版
+\usepackage{amsmath}
+% 编写公式所用宏包
+\usepackage{graphicx}
+% 插入图片所用宏包
+\usepackage{geometry}
+% 用于设置页边距
+\usepackage{fancyhdr}
+% 用于设置页眉页脚
+\usepackage{setspace}
+% 用于设置行距
+
+\setlength{\headheight}{12.64723pt}
+
+\title{Use Deep Learning in PIV}  % 设置标题
+\author{Zhichao Zhang}  % 设置作者
+\date{01.05.2023}  % 设置日期
+
+\geometry{papersize={20cm,15cm}}  % 设置纸张大小
+\geometry{left=1cm,right=2cm,top=3cm,bottom=4cm}  % 设置各个方向页边距
+
+\pagestyle{fancy}
+\lhead{Use Deep Learning in PIVr}  % 页眉区
+\chead{}
+\rhead{Zhichao Zhang}
+\lfoot{}  % 页脚区
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}  % 页眉页脚分割线
+\renewcommand{\headwidth}{\textwidth}
+\renewcommand{\footrulewidth}{0pt}
+
+\onehalfspacing  % 设置行距为字号的1.5倍，注意区分这个并不是1.5倍行距
+
+\addtolength{\parskip}{.4em}  % 更改段间距为0.4em
+
+% 这里是导言区，用于设置整篇文章的格式，例如页面大小，页面页脚样式，章节标题样式等
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{前人珠玉}
+
+\subsection{使用深度神经网络的非监督学习}
+
+在文章\cite{zhang_unsupervised_2020}中，提出了使用卷积神经网络对稠密光学流场进行非监督学习的方法。这篇文章中，首先分析了传统的流场速度分析方法及其优缺点，如果使用交叉相关性，计算量比较小，但是生成的流场是空间稀疏的，其稀疏程度取决于检测窗口，而且其得到的流场位移信息需要经过后处理。而基于变分的方法，虽然能生成连续的流场速度分布，但其计算量很大，因为这个一个优化问题，需要很多次的迭代来找到最优解。在当时2020年，还没有出现使用非监督学习的方法进行流场速度分析的先例。因为获取带有速度标注信息的流场速度数据集十分困难，如果使用人工数据，则一定会与真实数据存在差别，这个差别会导致当这个方法被泛化到真实数据时，存在一定的误差。
+
+之前有使用监督学习的FlowNetS和FlowNetC\cite{fischer_flownet_2015}，都在稠密光学场图像速度分析中取得了很好的成绩，而其改进版FlowNet2\cite{meister_unflow_2017}更是干到了SOTA的成绩，并且之后也提出了更为轻量化的LiteFlowNet，其在保持分析进度不变的前提下，减少了模型参数，有望使用到实时系统之中。
+
+他还有提到在这篇文章\cite{yu_back_2016}中，提出了使用非监督学习进行流场速度分析，并提出了photometric loss和 smoothness loss，他的文章最后使用的loss正是以此为基础，加入了一个consistency loss，用于反向流场的连续性约束。
+
+这篇文章中使用的正向流场与反向流场的思想来源于\cite{meister_unflow_2017}这篇文章。
+
+他在文中提到，这些网络的问题有二，第一是使用了大量的标注数据，这些数据的标注工作十分繁重，不易获得，或者使用了人工数据，与真实数据存在差别，可以预见其模型的泛化能力会收到影响。二是这些网络只能用于刚体或局部刚体(rigid or quasi-rigid)。
+
+他使用的是来自\cite{cai_flow_2021}生成的人工数据。这里一个很奇怪的点是，明明他之前批评别人使用人工数据，容易造成模型在真实数据中泛化能力差的问题，他自己又只使用人工数据。难道\cite{cai_flow_2021}生成人工数据的方法很厉害？这个待研究。
+
+目前的计划是复现这个实验，研究其使用的数据集，以及将其结果与davis的piv方法作比较。
+
+
+\subsection{一种很厉害的人工数据生成方法？}
+
+现在是关于这篇文章\cite{cai_dense_2019}的，读这篇文章的动力是，前一篇文章中提到，他使用的数据集是来自于这篇文章的，而且他虽然自己批评了别人使用人工数据会导致泛化性不好，但是自己仍然是使用了这篇文章生成的人工数据，所以想看看这种传说中的数据生成方法到底有多厉害。
+
+这篇文章宣称自己是第一个在piv领域全局使用cnn的模型。
+
+文章在intro的部分花了很大的篇幅介绍piv技术，以及卷积的概念。说piv，无论是基于交叉相关性的还是关于变分的，虽然现在应用很广，而且可靠性很高，但是要么没法生成稠密速度场，要么计算量比较大。基于dnn的虽然在训练的时候计算比较大，但是做inference的时候就很快，有在实时系统使用的潜力。
+
+这篇文章的两个主要贡献：
+
+一是改进了FlowNetS，全局使用了卷积层。具体是在expanding part中，去掉了计算量很大且不准的插值法，以反向卷积代替，并对应的调整了不同层的损失函数权重，且对速度和图像数据都进行了归一化。
+
+二是提出了一种人工piv数据生成的办法。根据一个matlab中的库PIVlab中的工具particle image generator，单个粒子的图像可以用两个方向的高斯分布建模。而后，生成了不同类型的速度场。这里有个问题，就是这些速度场的图像他是如何生成的？这个问题之后还是要想办法搞清楚。与此同时，他还给出了一些现成的piv图像数据集，之后可以考虑使用这些数据集来训练。将生成的粒子放入速度场，假设粒子没有质量，能够完全跟随速度场，就可以根据粒子所在的位置预测出粒子在下一个时刻的位置，由此得到两个连续的粒子分布图像，与使用的速度场一起，作为模型的input。还做了一些data augmentation
+
+
+\bibliographystyle{Unsrt}
+\bibliography{report}
+
+
+\end{document}
