@@ -1,16 +1,19 @@
 use DNN in PIV method
 
-goal:
+目标:
 
 端到端的流场分析
 
 粒子基本形状是3x3的矩阵，四个角是1，四条边是2，中心是3，然后再随机加上[0, 1)的噪声
-构造一个函数，能够在指定位置放入一个粒子
+粒子密度很大，单个颗粒很小
 
-the differece of intensive between this pixel is the feature of this object
+- [x] 构造一个函数，能够在指定位置放入一个粒子
 
-after that, we can apply some noise this every pixel intensive and set the ratio of variouty
+- [x] ~~想一个办法，能够模拟粒子从背景底部出现，并按照出现位置的速度计算下一帧的位置~~
+    - ~~但是目前的人工流场在Y方向上的速度都是相同的，且X方向上的速度为0，是否应该简化涉及，直接根据所在x轴，画出若干帧的位置？~~
 
-by testing, can place only single particle in flow field and generate trace
+- [ ] 发现一些成熟的PIV图像生成方法，应首先使用这些方法作为数据集来源。
 
-and also about the time dimension simulation
+- [ ] 读更多论文，看看这个领域最新最好的方法是什么？
+
+- [ ] 至少第一个月不写代码，多研究理论，以及把基础的那几个网络暂时搭出来
