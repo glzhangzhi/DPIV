@@ -1,12 +1,14 @@
-import scipy.io
 import numpy as np
 from PIL import Image
+import pickle
 
-def get_velocity_field(path_mat, factor=10):
+def get_velocity_field(path_pkl, factor=10):
 
-    mat = scipy.io.loadmat(str(path_mat))
-    u = mat['exactOpticalFlowDisplacements'][0][0][0][0][0][0] * factor
-    v = mat['exactOpticalFlowDisplacements'][0][0][0][0][0][1] * factor
+    with open(path_pkl, 'rb') as f:
+        uv = pickle.load(f)
+    
+    u = uv[:, :, 0] * factor
+    v = uv[:, :, 1] * factor
 
     return u, v
 
