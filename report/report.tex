@@ -77,6 +77,16 @@
 二是提出了一种人工piv数据生成的办法。根据一个matlab中的库PIVlab中的工具particle image generator，单个粒子的图像可以用两个方向的高斯分布建模。而后，生成了不同类型的速度场。这里有个问题，就是这些速度场的图像他是如何生成的？这个问题之后还是要想办法搞清楚。与此同时，他还给出了一些现成的piv图像数据集，之后可以考虑使用这些数据集来训练。将生成的粒子放入速度场，假设粒子没有质量，能够完全跟随速度场，就可以根据粒子所在的位置预测出粒子在下一个时刻的位置，由此得到两个连续的粒子分布图像，与使用的速度场一起，作为模型的input。还做了一些data augmentation
 
 
+\subsection{Flownet: the father of velocity field estimate}
+
+a simple choice is to stack both input images together and feed the through a rather generic network: FlowNetSimple.
+But we can never be sure that a local gradient descent can get the network to this point.
+Therefore, hand-design a architecture which is less generic
+
+create two seperate, yet identical processing streams for the two images and to combine them at a later stage.
+
+correlation layer: combine feature maps from two image
+
 \bibliographystyle{Unsrt}
 \bibliography{report}
 
