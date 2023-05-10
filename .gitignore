@@ -1,6 +1,12 @@
 template
 report/*
+__pycache__
+dataset
+Bits08
+example_data
+output
 
 !report/report.bib
 !report/report.tex
 !report/report.pdf
+
