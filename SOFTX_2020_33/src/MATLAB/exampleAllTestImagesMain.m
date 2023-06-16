@@ -21,7 +21,7 @@
 clear all;
 close all;
 
-sizeX=512; %Image width without margins
+sizeX=256; %Image width without margins
 sizeY=512; %Image height without margins
 
 displayFlowField=true; %Display image of each flow field,
