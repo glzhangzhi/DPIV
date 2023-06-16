@@ -37,6 +37,7 @@ def get_velocity_field(path_pkl, factor=10):
     return u, v
 
 def set_particle(image1, image2, x, y, u, v):
+    '''place particle in two frames according to velocity field'''
     
     # generate particle intensity image
     base_image = np.ones((3, 3))
@@ -50,43 +51,45 @@ def set_particle(image1, image2, x, y, u, v):
     # normalize particle intensity
     base_image = (base_image - base_image.min()) / (base_image.max() - base_image.min()) * 255
     
+    # TODO: maybe it is better to calculate the position before and after with the center of (x, y)
     # calculate particle position after velocity field
     x_, y_ = int(u[y, x] + x), int(v[y, x] + y)
 
-    # draw particle image
+    # draw particle image in first frame
     if x - 1 >= 0 and x + 1 <= image1.shape[1] - 1:
         if y - 1 >= 0 and y + 1 <= image1.shape[0] - 1:
             try:
-                image1[y-1:y+2, x-1:x+2] = base_image
+                image1[y - 1:y + 2, x - 1:x + 2] = base_image
             except IndexError:
                 pass
 
+    # draw particle image in second frame
     if x_ - 1 >= 0 and x_ + 1 <= image2.shape[1] - 1:
         if y_ - 1 >= 0 and y_ + 1 <= image2.shape[0] - 1:
             try:
-                image2[y_-1:y_+2, x_-1:x_+2] = base_image
+                image2[y_ - 1:y_ + 2, x_ - 1:x_ + 2] = base_image
             except IndexError:
                 pass
-
 
     return image1, image2
 
 def generate_frame_pair(u, v, width=256, height=512, num_particle=2000):
+    '''place particle into a velocity field to generate two frames of PIV image'''
 
-    image_width = width
-    image_height = height
+    # genrate two frames of blank image
+    image1 = np.zeros((height, width))
+    image2 = np.zeros((height, width))
 
-    num_particle = 2000
-
-    image1 = np.zeros((image_height, image_width))
-    image2 = np.zeros((image_height, image_width))
-
+    # place particles
     for _ in range(num_particle):
         
-        y = np.random.randint(0, image_height)
-        x = np.random.randint(0, image_width)
+        # choice the cordinate to place particle randomly
+        y = np.random.randint(0, height)
+        x = np.random.randint(0, width)
+
         image1, image2 = set_particle(image1, image2, x, y, u, v)
 
+    # convert two frame images into single channel
     image1_object = Image.fromarray(image1).convert('L')
     image2_object = Image.fromarray(image2).convert('L')
 
