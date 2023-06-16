@@ -1,7 +1,31 @@
-import numpy as np
-from PIL import Image
 import pickle
+from pathlib import Path
 
+import numpy as np
+import scipy.io
+from PIL import Image
+
+
+def convert_mat2pkl(path_mat:Path):
+    
+    dataset_dir = Path('./dataset')
+    dataset_dir.mkdir(exist_ok=True)
+    
+    name = path_mat.stem
+    
+    if (dataset_dir / f'{name}.pkl').exists():
+        return None    
+    
+    mat = scipy.io.loadmat(str(path_mat))
+    
+    u = mat['exactOpticalFlowDisplacements'][0][0][0][0][0][0]
+    v = mat['exactOpticalFlowDisplacements'][0][0][0][0][0][1]
+    
+    vu = np.stack((u, v), axis=2)
+    
+    with open(f'./dataset/{name}.pkl', 'wb') as f:
+        pickle.dump(vu, f)
+        
 def get_velocity_field(path_pkl, factor=10):
 
     with open(path_pkl, 'rb') as f:
