@@ -29,7 +29,7 @@ closeFlowField=false; %but do not close it automatically
 
 %flows={'rk_uniform' 'rankine_vortex' 'parabolic' 'uniform' 'stagnation',...
 %        'shear', 'shear_22d3', 'shear_45d0', 'decaying_vortex'};
-flows={'stagnation'};
+flows={'rk_uniform'};
 
 bitDepths=8;
 deltaXFactor=0.25;

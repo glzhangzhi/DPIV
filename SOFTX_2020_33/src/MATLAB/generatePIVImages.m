@@ -43,7 +43,7 @@ outFolder = ['out' filesep createPathNameForTestAndConditions( flowParameters, p
 if ~exist(outFolder, 'dir')
     mkdir(outFolder);
 end
-minDI = min(pivParameters.lastWindow(1), pivParameters.lastWindow(1));
+minDI = min(pivParameters.lastWindow(1), pivParameters.lastWindow(2));
 
 %Convert maxVelocity from mm/s to px/s and compute adequate dt for the
 %deltaXFactor.
