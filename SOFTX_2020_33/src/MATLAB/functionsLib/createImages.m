@@ -49,7 +49,7 @@ function [Im0, Im1] = createImages(pivParameters, imageProperties, particleMap, 
     Im1 = Im1(topMargin+1:bottomMargin, leftMargin+1:rightMargin);
     
     if pivParameters.noiseLevel > 0
-        %generate white noise
+        % generate white noise
         maxValue = 2^pivParameters.bits-1;
         noiseIm0=wgn(imageProperties.sizeY - imageProperties.marginsY, ...
             imageProperties.sizeX - imageProperties.marginsX, pivParameters.noiseLevel);
