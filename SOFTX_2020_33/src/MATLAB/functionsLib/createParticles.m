@@ -43,7 +43,7 @@ function [ flowField, particleMap ] = createParticles(flowParameters, pivParamet
     %Initialize randomness    
     randn('state', sum(100*clock));
     rand('state', sum(100*clock));
-    S=RandStream('mt19937ar','seed','shuffle');
+    % S=RandStream('mt19937ar','seed','shuffle');
 
     maxU = 0.0;
     maxV = 0.0;
