@@ -1,5 +1,7 @@
 import math
 
+from PIL import Image
+
 from PIV_Image_Generator.Flows import Rankine_Vortex_And_Uniform, Uniform
 from PIV_Image_Generator.Particle import (
     adjust_image_intensity,
@@ -63,6 +65,14 @@ particles = create_particles(sizex, sizey, laser_sheet_thickness, particle_inten
 img0, img1 = create_image(particles, flow, dt, sizex, sizey, noiselevel, bitdepth)
 
 # 调整强度
-img0, img1 = adjust_image_intensity(img0, img1, bitdepth)
+# img0, img1 = adjust_image_intensity(img0, img1, bitdepth)
 
-print(1)
+img0 = Image.fromarray(img0).convert('L')
+img1 = Image.fromarray(img1).convert('L')
+
+img0.save('./frame0.png')
+img1.save('./frame1.png')
+
+frames = [img0, img1]
+
+frames[0].save('img.gif', append_iamges=frames[1:], save_all=True, duration=300, loop=1)
