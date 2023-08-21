@@ -3,11 +3,8 @@ import math
 from PIL import Image
 
 from PIV_Image_Generator.Flows import Rankine_Vortex_And_Uniform, Uniform
-from PIV_Image_Generator.Particle import (
-    adjust_image_intensity,
-    create_image,
-    create_particles,
-)
+from PIV_Image_Generator.image_components import adjust_image_intensity, create_image
+from PIV_Image_Generator.particle_components import create_particles
 
 sizex = 512
 sizey = 512
