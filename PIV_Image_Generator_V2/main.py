@@ -1,4 +1,7 @@
+from copy import deepcopy
+
 import numpy as np
+from color_map import munsell_to_rgb, vector_to_munsell
 from Flow import Uniform
 from Particle import Particle
 from PIL import Image
@@ -6,16 +9,18 @@ from visualize_components import render_image_v1
 
 if __name__ == '__main__':
     
-    # np.random.seed(2333) 
+    # 定义图像属性
     
-    image_width = 64
-    image_height = 64
-    laser_sheet_thickness = 5
+    # np.random.seed(2333)  # 随机种子
     
-    particle_density = 1 / 256
+    image_width = 64  # 图像宽度
+    image_height = 64  # 图像高度
+    laser_sheet_thickness = 5  # 激光厚度
+    
+    particle_density = 1 / 256  # 粒子密度
 
-    particle_radius = 2
-    particle_intensity_peak = 1
+    particle_radius = 2  # 粒子半径
+    particle_intensity_peak = 1  # 粒子强度峰值
 
     num_particles = int(image_width * image_height * laser_sheet_thickness * particle_density)
 
@@ -38,6 +43,7 @@ if __name__ == '__main__':
     image1_png = Image.fromarray(image1).convert('L')
     image1_png.save('./output/test1.png')
     
+    # TODO more types of flow
     flow = Uniform(u=3, v=4, dt=1)
     
     particle_list = flow.computer_displacement_at_image_position(particle_list)
@@ -57,15 +63,22 @@ if __name__ == '__main__':
                 duration=300, loop=0)
     
     u, v = flow.output(image_width, image_height, 1)
-    
-    # https://zh.wikipedia.org/zh-hans/%E5%AD%9F%E5%A1%9E%E5%B0%94%E9%A2%9C%E8%89%B2%E7%B3%BB%E7%BB%9F
-    # TODO use Munsell color system to show direction and norm of the velocity vector at the same picture
     m = (u ** 2 + v ** 2) ** 0.5
+    
+    max_v = m.max()
+    
+    # convert vector to RGB color system
+    color_m = np.zeros((m.shape[0], m.shape[1], 3), dtype=np.uint8)
+    
+    for i in range(m.shape[0]):
+        for j in range(m.shape[1]):
+            hue, value, chroma = vector_to_munsell(u[i, j], v[i, j], max_v)
+            color_m[i, j, :] = munsell_to_rgb(hue, value, chroma)
     
     u_png = Image.fromarray(u).convert('L')
     u_png.save('./output/u.png')
     v_png = Image.fromarray(v).convert('L')
     v_png.save('./output/v.png') 
-    m_png = Image.fromarray(m).convert('L')
-    m_png.save('./output/m.png')
+    color_m = Image.fromarray(color_m, 'RGB')
+    color_m.save('./output/m.png')
     print('end')
