@@ -36,7 +36,7 @@ if __name__ == '__main__':
     image1 = (image1 - image1.min()) / (image1.max() - image1.min()) * 200
     
     image1_png = Image.fromarray(image1).convert('L')
-    image1_png.save('./outpus/test1.png')
+    image1_png.save('./output/test1.png')
     
     flow = Uniform(u=3, v=4, dt=1)
     
@@ -47,23 +47,25 @@ if __name__ == '__main__':
     image2 = (image2 - image2.min()) / (image2.max() - image2.min()) * 200
     
     image2_png = Image.fromarray(image2).convert('L')
-    image2_png.save('./outpus/test2.png')
+    image2_png.save('./output/test2.png')
     
     frames = [image1_png, image2_png]
     
-    frames[0].save("test.gif", format='GIF',
+    frames[0].save("./output/test.gif", format='GIF',
                 append_images=frames[1:],
                 save_all=True,
                 duration=300, loop=0)
     
     u, v = flow.output(image_width, image_height, 1)
     
+    # https://zh.wikipedia.org/zh-hans/%E5%AD%9F%E5%A1%9E%E5%B0%94%E9%A2%9C%E8%89%B2%E7%B3%BB%E7%BB%9F
+    # TODO use Munsell color system to show direction and norm of the velocity vector at the same picture
     m = (u ** 2 + v ** 2) ** 0.5
     
     u_png = Image.fromarray(u).convert('L')
-    u_png.save('./outpus/u.png')
+    u_png.save('./output/u.png')
     v_png = Image.fromarray(v).convert('L')
-    v_png.save('./outpus/v.png') 
+    v_png.save('./output/v.png') 
     m_png = Image.fromarray(m).convert('L')
-    m_png.save('./outpus/m.png')
+    m_png.save('./output/m.png')
     print('end')
