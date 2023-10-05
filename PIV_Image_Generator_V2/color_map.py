@@ -1,5 +1,7 @@
 import math
 
+import numpy as np
+
 '''
 https://www.rapidtables.com/convert/color/hsv-to-rgb.html
 https://www.rapidtables.com/convert/color/rgb-to-hsv.html
@@ -11,7 +13,7 @@ def vector_to_munsell(u, v, max_v):
     '''
     
     # 映射到色调
-    hue = math.degrees(math.atan2(v, u))
+    hue = math.degrees(np.arctan2(v, u))
     if hue < 0:
         hue += 360
 
