@@ -60,9 +60,41 @@ def munsell_to_rgb(hue: float, value: float, chroma: float):
     return (R, G, B)
 
 
+def rgb_to_munsell(r, g, b):
+    '''
+    convert color in rgb system into munsell color system
+    '''
+    r_ = r / 255
+    g_ = g / 255
+    b_ = b / 255
+    
+    cmax = max(r_, g_, b_)
+    cmin = min(r_, g_, b_)
+    delta = cmax - cmin
+    
+    value = cmax
+    
+    if cmax == 0:
+        chroma = 0
+    else:
+        chroma = delta / cmax
+    
+    if delta == 0:
+        hue = 0
+    elif cmax == r_:
+        hue = 60 * (((g_ - b_) / delta) % 6)
+    elif cmax == g_:
+        hue = 60 * (((b_ - r_) / delta) + 2)
+    elif cmax == b_:
+        hue = 60 * (((r_ - g_) / delta) + 4)
+    else:
+        raise ValueError('can not calculate the hue')
+    
+    return hue, value * 100, chroma * 100
+
 if __name__ == "__main__":
     
-    x, y, max_v = 4, 0, 5
+    x, y, max_v = 4, 3, 10
 
     # 调用函数进行映射
     hue, value, chroma = vector_to_munsell(x, y, max_v)
@@ -77,3 +109,11 @@ if __name__ == "__main__":
 
     # 输出RGB值
     print(f"对应的RGB值为:({r}, {g}, {b})")
+    
+    # 再反向转换到munsell
+    h, v, c = rgb_to_munsell(r, g, b)
+    
+    # 输出结果
+    print(f"色调(Hue): {h:.2f}°")
+    print(f"明度(Value): {v:.2f}")
+    print(f"饱和度(Chroma): {c:.2f}")
