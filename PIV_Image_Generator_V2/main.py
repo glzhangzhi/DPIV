@@ -2,7 +2,7 @@ from copy import deepcopy
 
 import numpy as np
 from color_map import munsell_to_rgb, vector_to_munsell
-from Flow import Uniform
+from Flow import Rankine_Vortex, Uniform
 from Particle import Particle
 from PIL import Image
 from visualize_components import render_image_v1
@@ -44,7 +44,8 @@ if __name__ == '__main__':
     image1_png.save('./output/test1.png')
     
     # TODO more types of flow
-    flow = Uniform(u=3, v=4, dt=1)
+    # flow = Uniform(u=3, v=4, dt=1)
+    flow = Rankine_Vortex(0, image_height / 2, 10, 5, 1)
     
     particle_list = flow.computer_displacement_at_image_position(particle_list)
     
