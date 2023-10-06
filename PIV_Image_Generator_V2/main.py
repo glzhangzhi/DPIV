@@ -2,7 +2,7 @@ from copy import deepcopy
 
 import numpy as np
 from color_map import munsell_to_rgb, vector_to_munsell
-from Flow import Rankine_Vortex, Uniform
+from Flow import Rankine_Vortex, Stagnation, Uniform
 from Particle import Particle
 from PIL import Image
 from visualize_components import render_image_v1
@@ -66,21 +66,34 @@ if __name__ == '__main__':
     
     u, v = flow.output(image_width, image_height, 1)
     m = (u ** 2 + v ** 2) ** 0.5
-    
+    z = np.zeros_like(m)
     max_v = m.max()
     
     # convert vector to RGB color system
     color_m = np.zeros((m.shape[0], m.shape[1], 3), dtype=np.uint8)
-    
     for i in range(m.shape[0]):
         for j in range(m.shape[1]):
             hue, value, chroma = vector_to_munsell(u[i, j], v[i, j], max_v)
             color_m[i, j, :] = munsell_to_rgb(hue, value, chroma)
     
-    u_png = Image.fromarray(u).convert('L')
-    u_png.save('./output/u.png')
-    v_png = Image.fromarray(v).convert('L')
-    v_png.save('./output/v.png') 
+    # convert vector to RGB color system
+    color_u = np.zeros((u.shape[0], u.shape[1], 3), dtype=np.uint8)
+    for i in range(u.shape[0]):
+        for j in range(u.shape[1]):
+            hue, value, chroma = vector_to_munsell(u[i, j], z[i, j], max_v)
+            color_u[i, j, :] = munsell_to_rgb(hue, value, chroma)
+    
+    # convert vector to RGB color system
+    color_v = np.zeros((v.shape[0], v.shape[1], 3), dtype=np.uint8)
+    for i in range(v.shape[0]):
+        for j in range(v.shape[1]):
+            hue, value, chroma = vector_to_munsell(z[i, j], v[i, j], max_v)
+            color_v[i, j, :] = munsell_to_rgb(hue, value, chroma)
+    
+    color_u = Image.fromarray(color_u, 'RGB')
+    color_u.save('./output/u.png')
+    color_v = Image.fromarray(color_v, 'RGB')
+    color_v.save('./output/v.png')
     color_m = Image.fromarray(color_m, 'RGB')
     color_m.save('./output/m.png')
     print('end')
