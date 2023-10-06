@@ -92,3 +92,65 @@ class Rankine_Vortex:
                 v[y][x] = (y_ - y) / self.dt
 
         return u, v
+
+class Stagnation:
+    
+    def __init__(self, image_width, image_height, max_velocity, dt):
+        self.image_width = image_width
+        self.image_height = image_height
+        self.max_velocity = max_velocity
+        self.dt = dt
+    
+    def computer_displacement_at_image_position(self, particles:List[Particle]):
+        
+        xc = 0
+        yc = 0
+        maxx = self.image_width
+        maxy = self.image_height
+        m = np.sqrt(np.square(maxx - xc) + np.square(maxy - yc))
+        t = np.exp(self.max_velocity * self.dt / m)
+        
+        for i, particle in enumerate(particles):
+            if particle.y1 >= yc:
+                particles[i].x2 = t * (particle.x1 - xc) + xc
+                particles[i].y2 = t ** -1 * (particle.y1 - yc) + yc
+            else:
+                particles[i].x2 = particles[i].x1
+                particles[i].y2 = particles[i].y1
+            
+        return particles
+    
+    def output(self, image_width:float, image_height:float, ratio:float):
+        
+        number_cells_x = image_width * ratio
+        number_cells_y = image_height * ratio
+        
+        u:np.ndarray = np.zeros((number_cells_y, number_cells_x))
+        v:np.ndarray = np.zeros((number_cells_y, number_cells_x))
+        
+        print('generating velocity matrix ...')
+        
+        xc = 0
+        yc = 0
+        maxx = self.image_width
+        maxy = self.image_height
+        m = np.sqrt(np.square(maxx - xc) + np.square(maxy - yc))
+        t = np.exp(self.max_velocity * self.dt / m)
+        
+        for x in trange(number_cells_x):
+            for y in range(number_cells_y):
+                
+                x_cor = x - number_cells_x / 2
+                y_cor = self.image_height - y
+                
+                if y_cor < yc:
+                    x_ = x_cor
+                    y_ = y
+                else:
+                    x_ = t * (x_cor - xc) + xc
+                    y_ = t ** -1 * (y - yc) + yc
+                
+                u[y][x] = (x_ - x) / self.dt
+                v[y][x] = (y_ - y) / self.dt
+
+        return u, v

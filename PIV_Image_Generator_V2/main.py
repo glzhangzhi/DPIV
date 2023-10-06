@@ -44,8 +44,9 @@ if __name__ == '__main__':
     image1_png.save('./output/test1.png')
     
     # TODO more types of flow
-    # flow = Uniform(u=3, v=4, dt=1)
-    flow = Rankine_Vortex(0, image_height / 2, 10, 5, 1)
+    # flow = Uniform(u=3, v=0, dt=1)
+    # flow = Rankine_Vortex(0, image_height / 2, 10, 5, 1)
+    flow = Stagnation(image_width, image_height, 5, 1)
     
     particle_list = flow.computer_displacement_at_image_position(particle_list)
     
